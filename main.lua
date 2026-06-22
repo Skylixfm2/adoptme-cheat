@@ -1,4 +1,4 @@
-print("=== AUTO QUEST ŒUF v62 - Rayfield UI + Auto Shower Pro ===")
+print("=== AUTO QUEST ŒUF v63 - Fix TP + Food ===")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -11,7 +11,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Cheat Adopt Me | by SkylixFM",
     LoadingTitle = "Auto Quest Œuf",
-    LoadingSubtitle = "v62 - Auto Shower Pro",
+    LoadingSubtitle = "v63 - Fix TP + Food",
     ConfigurationSaving = { Enabled = true, FolderName = "AutoQuestOeuf", FileName = "Config" },
     KeySystem = false
 })
@@ -19,7 +19,7 @@ local Window = Rayfield:CreateWindow({
 local Tab = Window:CreateTab("Main", 4483362458)
 local QuestTab = Window:CreateTab("Auto Quest Œuf", 4483362458)
 
--- === findItem (corrigé) ===
+-- === findItem ===
 local function findItem(keyword)
     local success, inventory = pcall(function()
         return require(ReplicatedStorage:WaitForChild("Fsys", 5)).load("Inventory")
@@ -33,7 +33,7 @@ local function findItem(keyword)
     return nil
 end
 
--- ==================== AUTO SHOWER PRO (Version Fusionnée) ====================
+-- ==================== AUTO SHOWER PET (Fix TP Joueur) ====================
 Tab:CreateButton({
     Name = "🛁 Auto Shower Pet (Pro TP)",
     Callback = function()
@@ -54,7 +54,7 @@ Tab:CreateButton({
             return
         end
 
-        -- Recherche ModernShower + TP très proche (version améliorée)
+        -- Recherche ModernShower
         local shower = nil
         local houseInteriors = Workspace:FindFirstChild("HouseInteriors")
         if houseInteriors then
@@ -64,17 +64,17 @@ Tab:CreateButton({
         if shower then
             local center = shower:FindFirstChild("Center") or shower.PrimaryPart
             if center then
-                -- TP très agressif (comme ton test v55)
+                -- TP UNIQUEMENT le pet (fix)
                 petRoot.CFrame = center.CFrame * CFrame.new(0, 2, 0)
                 Rayfield:Notify("Auto Shower", "Pet téléporté DIRECTEMENT dans la douche !", 4483362458)
-                print("✅ Pet téléporté DIRECTEMENT dans la douche !")
+                print("✅ Pet téléporté dans la douche")
                 task.wait(2)
-                Rayfield:Notify("Auto Shower", "Attends 2-3 secondes que le pet commence à se laver", 4483362458)
+                Rayfield:Notify("Auto Shower", "Attends que le pet se lave...", 4483362458)
             else
-                Rayfield:Notify("Erreur", "Center/PrimaryPart non trouvé", 4483362458)
+                Rayfield:Notify("Erreur", "Center non trouvé", 4483362458)
             end
         else
-            Rayfield:Notify("Erreur", "ModernShower non trouvé dans ta maison", 4483362458)
+            Rayfield:Notify("Erreur", "ModernShower non trouvé", 4483362458)
         end
     end,
 })
@@ -128,7 +128,7 @@ for name, cf in pairs(tps) do
     })
 end
 
--- ==================== FOOD ====================
+-- ==================== FOOD (Fixé) ====================
 Tab:CreateButton({ 
     Name = "🍔 Équiper Sandwich (Hungry)", 
     Callback = function()
@@ -136,11 +136,13 @@ Tab:CreateButton({
         if food then
             pcall(function()
                 local ctm = require(ReplicatedStorage:FindFirstChild("ClientToolManager", true))
-                if ctm and ctm.backpack_equip then ctm.backpack_equip(food) end
+                if ctm and ctm.backpack_equip then 
+                    ctm.backpack_equip(food) 
+                    Rayfield:Notify("Succès", "Sandwich équipé", 4483362458)
+                end
             end)
-            Rayfield:Notify("Succès", "Sandwich équipé", 4483362458)
         else
-            Rayfield:Notify("Erreur", "Aucun sandwich", 4483362458)
+            Rayfield:Notify("Erreur", "Aucun sandwich trouvé", 4483362458)
         end
     end
 })
@@ -152,16 +154,18 @@ Tab:CreateButton({
         if drink then
             pcall(function()
                 local ctm = require(ReplicatedStorage:FindFirstChild("ClientToolManager", true))
-                if ctm and ctm.backpack_equip then ctm.backpack_equip(drink) end
+                if ctm and ctm.backpack_equip then 
+                    ctm.backpack_equip(drink) 
+                    Rayfield:Notify("Succès", "Boisson équipée", 4483362458)
+                end
             end)
-            Rayfield:Notify("Succès", "Boisson équipée", 4483362458)
         else
-            Rayfield:Notify("Erreur", "Aucune boisson", 4483362458)
+            Rayfield:Notify("Erreur", "Aucune boisson trouvée", 4483362458)
         end
     end
 })
 
--- ==================== AUTO QUEST ŒUF (Ajouté) ====================
+-- ==================== AUTO QUEST ŒUF ====================
 local AutoQuestEnabled = false
 local QuestConnection = nil
 
@@ -214,5 +218,5 @@ QuestTab:CreateToggle({
     end
 })
 
-Rayfield:Notify("Panel Chargé", "v62 - Complet & Optimisé", 4483362458)
-print("v62 chargé avec succès !")
+Rayfield:Notify("Panel Chargé", "v63 - TP Fix + Food Fix", 4483362458)
+print("v63 chargé avec succès !")
