@@ -10,7 +10,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "Cheat Adopt Me | by SkylixFM",
-    LoadingTitle = "Auto Quest Œuf",
+    LoadingTitle = "Auto Quest Œuf/pet manual",
     LoadingSubtitle = "v63 - Full",
     ConfigurationSaving = { Enabled = true, FolderName = "AutoQuestOeuf", FileName = "Config" },
     KeySystem = false
@@ -18,11 +18,9 @@ local Window = Rayfield:CreateWindow({
 
 local Tab = Window:CreateTab("Main", 4483362458)
 
--- =============================================
--- TP DEVANT MA MAISON
--- =============================================
+
 Tab:CreateButton({
-    Name = "🏠 TP Devant Ma Maison",
+    Name = " TP in my house",
     Callback = function()
         local houseInteriors = Workspace:FindFirstChild("HouseInteriors")
         if not houseInteriors then
@@ -57,11 +55,9 @@ Tab:CreateButton({
     end,
 })
 
--- =============================================
--- AUTO SHOWER (JOUEUR + PET)
--- =============================================
+
 Tab:CreateButton({
-    Name = "🛁 Auto Shower (Joueur + Pet)",
+    Name = "TP Shower (player + Pet)",
     Callback = function()
         local EquippedPets = nil
         pcall(function()
@@ -106,9 +102,7 @@ Tab:CreateButton({
     end,
 })
 
--- =============================================
--- SPEED HACK
--- =============================================
+
 local speedValue = 100
 local speedConnection = nil
 
