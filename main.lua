@@ -1,4 +1,4 @@
-print("=== AUTO QUEST ŒUF v71 - Final Version ===")
+print("=== AUTO QUEST ŒUF v71 - Full Version avec TPs ===")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -12,7 +12,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Cheat Adopt Me | by SkylixFM",
     LoadingTitle = "Key System",
-    LoadingSubtitle = "v71 - Final",
+    LoadingSubtitle = "v71 - Full",
     ConfigurationSaving = { Enabled = true, FolderName = "AutoQuestOeuf", FileName = "Config" },
 })
 
@@ -42,13 +42,11 @@ local function IsKeyValid(inputKey, selectedType)
     
     for _, entry in ipairs(allKeys) do
         if entry.fullKey == inputKey then
-            -- Vérification stricte du type
             if entry.type ~= selectedType then
-                Rayfield:Notify("❌ Type incorrect", "Key "..entry.type.." mais tu as sélectionné "..selectedType, 4483362458)
+                Rayfield:Notify("❌ Type incorrect", "Key "..(entry.type or "inconnu").." mais tu as sélectionné "..selectedType, 4483362458)
                 return false
             end
 
-            -- Vérification expiration
             if not UsedKeys[inputKey] then return true end
 
             local data = UsedKeys[inputKey]
@@ -60,7 +58,7 @@ local function IsKeyValid(inputKey, selectedType)
 
             local daysPassed = (os.time() - (data.firstUse or os.time())) / 86400
             if daysPassed > days then
-                Rayfield:Notify("⏰ Key Expirée", "Cette key a expiré", 4483362458)
+                Rayfield:Notify("⏰", "Key expirée", 4483362458)
                 return false
             end
             return true
@@ -102,6 +100,7 @@ Tab:CreateInput({
 
 -- ==================== CHEAT COMPLET ====================
 function LoadFullCheat()
+    
     -- TP Devant Ma Maison
     Tab:CreateButton({
         Name = "🏠 TP Devant Ma Maison",
@@ -117,6 +116,27 @@ function LoadFullCheat()
             Rayfield:Notify("🛁", "Téléportation Joueur + Pet...", 4483362458)
         end,
     })
+
+    -- ==================== AUTRES TPs ====================
+    local tps = {
+        ["Buy Water"] = CFrame.new(3020.41, 6960.26, -3002.70),
+        ["Buy Food"]  = CFrame.new(3020.41, 6960.26, -3042.36),
+        ["Camping"]   = CFrame.new(-18.79, 31.93, -1053.97),
+        ["Playground"] = CFrame.new(-353.36, 30.89, -1759.09),
+    }
+
+    for name, cf in pairs(tps) do
+        Tab:CreateButton({
+            Name = "TP " .. name,
+            Callback = function()
+                local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                if root then 
+                    root.CFrame = cf 
+                    Rayfield:Notify("TP", name, 4483362458)
+                end
+            end
+        })
+    end
 
     -- Speed Hack
     local speedValue = 100
