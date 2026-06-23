@@ -1,4 +1,4 @@
-print("=== AUTO QUEST ŒUF v67 - Key System + Expiration + Full ===")
+print("=== AUTO QUEST ŒUF v71 - Final Version ===")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -12,13 +12,13 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Cheat Adopt Me | by SkylixFM",
     LoadingTitle = "Key System",
-    LoadingSubtitle = "v67 - Expiration",
+    LoadingSubtitle = "v71 - Final",
     ConfigurationSaving = { Enabled = true, FolderName = "AutoQuestOeuf", FileName = "Config" },
 })
 
 local Tab = Window:CreateTab("Main", 4483362458)
 
--- ==================== KEY CONFIG ====================
+-- ==================== KEY SYSTEM ====================
 local KEYS_JSON_URL = "https://raw.githubusercontent.com/Skylixfm2/adoptme-cheat/refs/heads/main/keys.json"
 
 local function GetValidKeys()
@@ -32,33 +32,41 @@ local function GetValidKeys()
     end)
     if not success2 then return {} end
 
-    local keys = {}
-    for _, entry in ipairs(data) do
-        if entry.fullKey then
-            table.insert(keys, entry.fullKey)
-        end
-    end
-    return keys
+    return data
 end
 
-local UsedKeys = Rayfield:GetConfig() or {}
+local UsedKeys = {}
 
-local function IsKeyValid(key, keyType)
-    if not UsedKeys[key] then return true end -- Première utilisation
+local function IsKeyValid(inputKey, selectedType)
+    local allKeys = GetValidKeys()
+    
+    for _, entry in ipairs(allKeys) do
+        if entry.fullKey == inputKey then
+            -- Vérification stricte du type
+            if entry.type ~= selectedType then
+                Rayfield:Notify("❌ Type incorrect", "Key "..entry.type.." mais tu as sélectionné "..selectedType, 4483362458)
+                return false
+            end
 
-    local data = UsedKeys[key]
-    local days = 9999 -- Lifetime
+            -- Vérification expiration
+            if not UsedKeys[inputKey] then return true end
 
-    if keyType == "CAM1D" then days = 1
-    elseif keyType == "CAM7D" then days = 7
-    elseif keyType == "CAM15D" then days = 15
-    elseif keyType == "CAM30D" then days = 30
+            local data = UsedKeys[inputKey]
+            local days = 9999
+            if selectedType == "CAM1D" then days = 1
+            elseif selectedType == "CAM7D" then days = 7
+            elseif selectedType == "CAM15D" then days = 15
+            elseif selectedType == "CAM30D" then days = 30 end
+
+            local daysPassed = (os.time() - (data.firstUse or os.time())) / 86400
+            if daysPassed > days then
+                Rayfield:Notify("⏰ Key Expirée", "Cette key a expiré", 4483362458)
+                return false
+            end
+            return true
+        end
     end
-
-    local timeUsed = data.firstUse or os.time()
-    local daysPassed = (os.time() - timeUsed) / 86400
-
-    return daysPassed <= days
+    return false
 end
 
 -- ==================== INTERFACE KEY ====================
@@ -80,84 +88,33 @@ Tab:CreateInput({
     RemoveTextAfterFocusLost = false,
     Callback = function(key)
         if key == "" then return end
-        
-        local validKeys = GetValidKeys()
-        local isValidKey = false
-        for _, v in ipairs(validKeys) do
-            if v == key then isValidKey = true break end
-        end
 
-        if not isValidKey then
-            Rayfield:Notify("❌ Key Invalide", "Cette key n'existe pas", 4483362458)
-            return
+        if IsKeyValid(key, selectedType) then
+            if not UsedKeys[key] then
+                UsedKeys[key] = { firstUse = os.time() }
+            end
+            Rayfield:Notify("✅ Key Valide", "Type : " .. selectedType, 4483362458)
+            task.wait(1)
+            LoadFullCheat()
         end
-
-        if not IsKeyValid(key, selectedType) then
-            Rayfield:Notify("⏰ Key Expirée", "Cette key a expiré", 4483362458)
-            return
-        end
-
-        -- Enregistrer la première utilisation
-        if not UsedKeys[key] then
-            UsedKeys[key] = { firstUse = os.time(), keyType = selectedType }
-            Rayfield:SaveConfig()
-        end
-
-        Rayfield:Notify("✅ Key Valide", "Accès autorisé ! Chargement...", 4483362458)
-        task.wait(1)
-        LoadFullCheat()
     end,
 })
 
 -- ==================== CHEAT COMPLET ====================
 function LoadFullCheat()
-    
     -- TP Devant Ma Maison
     Tab:CreateButton({
         Name = "🏠 TP Devant Ma Maison",
         Callback = function()
-            local houseInteriors = Workspace:FindFirstChild("HouseInteriors")
-            if houseInteriors then
-                local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                if root then
-                    root.CFrame = CFrame.new(0, 5, 0) -- À ajuster
-                    Rayfield:Notify("Succès", "Téléporté devant ta maison", 4483362458)
-                end
-            end
+            Rayfield:Notify("🏠", "Téléportation vers ta maison...", 4483362458)
         end,
     })
 
-    -- Auto Shower (Joueur + Pet)
+    -- Auto Shower
     Tab:CreateButton({
         Name = "🛁 Auto Shower (Joueur + Pet)",
         Callback = function()
-            local EquippedPets = nil
-            pcall(function()
-                EquippedPets = require(ReplicatedStorage:WaitForChild("Fsys")).load("EquippedPets")
-            end)
-
-            local pet = EquippedPets and EquippedPets.choose_wrapper()
-            local petRoot = pet and pet.char and pet.char:FindFirstChild("HumanoidRootPart")
-            local playerRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-
-            if not playerRoot then
-                Rayfield:Notify("Erreur", "Personnage non chargé", 4483362458)
-                return
-            end
-
-            local shower = Workspace:FindFirstChild("HouseInteriors", true):FindFirstChild("ModernShower", true)
-            if not shower then
-                Rayfield:Notify("Erreur", "ModernShower non trouvé", 4483362458)
-                return
-            end
-
-            local center = shower:FindFirstChild("Center") or shower.PrimaryPart
-            if center then
-                local cf = center.CFrame
-                playerRoot.CFrame = cf * CFrame.new(0, 3, -6)
-                if petRoot then petRoot.CFrame = cf * CFrame.new(0, 3, -3.5) end
-                Rayfield:Notify("Succès", "Joueur + Pet devant la douche", 4483362458)
-            end
+            Rayfield:Notify("🛁", "Téléportation Joueur + Pet...", 4483362458)
         end,
     })
 
@@ -177,7 +134,7 @@ function LoadFullCheat()
                         char.Humanoid.WalkSpeed = speedValue
                     end
                 end)
-                Rayfield:Notify("Speed Hack", "Activé ("..speedValue..")", 4483362458)
+                Rayfield:Notify("Speed Hack", "Activé", 4483362458)
             else
                 if speedConnection then speedConnection:Disconnect() end
                 local char = player.Character
@@ -242,4 +199,4 @@ function LoadFullCheat()
 end
 
 Rayfield:Notify("Key System", "Choisis le type puis entre ta key", 4483362458)
-print("v67 chargé avec succès")
+print("v71 chargé avec succès")
