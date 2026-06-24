@@ -1,4 +1,4 @@
-print("=== AUTO QUEST ŒUF v73 - Key System + Full ===")
+print("=== best adopte me cheat made by SkylixFM ===")
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -12,7 +12,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Cheat Adopt Me | by SkylixFM",
     LoadingTitle = "Adopte me cheat",
-    LoadingSubtitle = "v73 - Key + Full",
+    LoadingSubtitle = "v73 cheat made by SkylixFM",
     ConfigurationSaving = { Enabled = true, FolderName = "AutoQuestOeuf", FileName = "Config" },
 })
 
